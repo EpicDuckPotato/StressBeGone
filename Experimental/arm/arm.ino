@@ -147,8 +147,8 @@ void loop() {
         }else{
           dy_dt = 0;
         }
-        dgamma_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(gamma - PI/2)/tan(alpha) - b*cos(gamma - PI/2));
-        dalpha_dt = -(b*sin(gamma - PI/2)*dgamma_dt + dx_dt);
+        dgamma_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(gammma - PI/2)/tan(alpha) - b*cos(gammma - PI/2));
+        dalpha_dt = -(b*sin(gammma - PI/2)*dgamma_dt + dx_dt);
         dbeta_dt = -dgamma_dt - dalpha_dt;
         isStoppedXY = false;
         
@@ -170,8 +170,8 @@ void loop() {
           }else{
             dy_dt = 0;
           }
-          dgamma_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(gamma - PI/2)/tan(alpha) - b*cos(gamma - PI/2));
-          dalpha_dt = -(b*sin(gamma - PI/2)*dgamma_dt + dx_dt);
+          dgamma_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(gammma - PI/2)/tan(alpha) - b*cos(gammma - PI/2));
+          dalpha_dt = -(b*sin(gammma - PI/2)*dgamma_dt + dx_dt);
           dbeta_dt = -dgamma_dt - dalpha_dt;
           isStoppedXY = false;
         }
@@ -188,8 +188,8 @@ void loop() {
         }else{
 	  dx_dt = 0;
 	  dy_dt = BASE_SPEED;
-	  dgamma_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(gamma - PI/2)/tan(alpha) - b*cos(gamma - PI/2));
-          dalpha_dt = -(b*sin(gamma - PI/2)*dgamma_dt + dx_dt);
+	  dgamma_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(gammma - PI/2)/tan(alpha) - b*cos(gammma - PI/2));
+          dalpha_dt = -(b*sin(gammma - PI/2)*dgamma_dt + dx_dt);
           dbeta_dt = -dgamma_dt - dalpha_dt;
           isStoppedXY = false;
         }
@@ -200,8 +200,8 @@ void loop() {
         }else{
 	  dx_dt = 0;
 	  dy_dt = -BASE_SPEED;
-	  dgamma_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(gamma - PI/2)/tan(alpha) - b*cos(gamma - PI/2));
-          dalpha_dt = -(b*sin(gamma - PI/2)*dgamma_dt + dx_dt);
+	  dgamma_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(gammma - PI/2)/tan(alpha) - b*cos(gammma - PI/2));
+          dalpha_dt = -(b*sin(gammma - PI/2)*dgamma_dt + dx_dt);
           dbeta_dt = -dgamma_dt - dalpha_dt;
           isStoppedXY = false;
         }
@@ -223,8 +223,8 @@ void loop() {
         }
         
         if(dy_dt != 0}{
-          dgamma_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(gamma - PI/2)/tan(alpha) - b*cos(gamma - PI/2));
-          dalpha_dt = -(b*sin(gamma - PI/2)*dgamma_dt + dx_dt);
+          dgamma_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(gammma - PI/2)/tan(alpha) - b*cos(gammma - PI/2));
+          dalpha_dt = -(b*sin(gammma - PI/2)*dgamma_dt + dx_dt);
           dbeta_dt = -dgamma_dt - dalpha_dt;
           isStoppedXY = false;
         }
@@ -246,8 +246,8 @@ void loop() {
         }
         
         if(dy_dt != 0){
-          dgamma_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(gamma - PI/2)/tan(alpha) - b*cos(gamma - PI/2));
-          dalpha_dt = -(b*sin(gamma - PI/2)*dgamma_dt + dx_dt);
+          dgamma_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(gammma - PI/2)/tan(alpha) - b*cos(gammma - PI/2));
+          dalpha_dt = -(b*sin(gammma - PI/2)*dgamma_dt + dx_dt);
           dbeta_dt = -dgamma_dt - dalpha_dt;
           isStoppedXY = false;
         }
