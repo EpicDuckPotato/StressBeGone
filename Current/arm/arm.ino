@@ -5,7 +5,7 @@
 #define STOP_SPEED 100//in dxl units
 #define BASE_SPEED 0.2//in meters per second
 
-#define INITIAL_1 1678//dxl units
+#define INITIAL_1 2600//dxl units 1678
 #define INITIAL_3 3800//3750
 #define INITIAL_4 1649//1749
 #define INITIAL_5 1200//1100
@@ -26,7 +26,7 @@
 //#define GAMMA_MAX 3
 #define GAMMA_MAX 4.5//CHANGE
 
-#define LEFT_LIM 2100//dxl units
+#define LEFT_LIM 3000//dxl units 2100
 #define RIGHT_LIM 1434
 
 //declare RC100 stuff
