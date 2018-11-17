@@ -21,10 +21,10 @@
 //#define BETA_MIN 1.2
 #define BETA_MIN 0.25//CHANGE
 #define BETA_MAX 3.14
-//#define GAMMA_MIN 1.5
-#define GAMMA_MIN 1.6//CHANGE
-//#define GAMMA_MAX 3
-#define GAMMA_MAX 4.5//CHANGE
+//#define PHI_MIN 1.5
+#define PHI_MIN 1.6//CHANGE
+//#define PHI_MAX 3
+#define PHI_MAX 4.5//CHANGE
 
 #define LEFT_LIM 2100//dxl units
 #define RIGHT_LIM 1434
@@ -40,11 +40,11 @@ double dx_dt;//in meters per second
 double dy_dt;
 double dalpha_dt;//in 0.229 revolutions per second
 double dbeta_dt;
-double dgamma_dt;
+double dphi_dt;
 double dtheta_dt;
 double alpha;//in radians
 double beta;
-double gammma;
+double phi;
 double x;
 double y;
 double a;//upper arm length in meters
@@ -84,7 +84,7 @@ void setup() {
   dy_dt = 0;
   dalpha_dt = 0;
   dbeta_dt = 0;
-  dgamma_dt = 0;
+  dphi_dt = 0;
   dtheta_dt = 0;
   a = 0.3302;//upper arm length in meters
   b = 0.235;//lower arm length
@@ -119,7 +119,7 @@ void loop() {
   pos5 = Dxl.getPosition(5);
   alpha = 2*PI*pos3/4095 - 5.212;
   beta = 2*PI*pos4/4095 + 0.2282 - PI/2;
-  gammma = 3*PI/2 - alpha - beta;
+  phi = 3*PI/2 - alpha - beta;
   x = a*cos(alpha) + b*cos(PI - beta - alpha);
   y = a*sin(alpha) - b*sin(PI - beta - alpha) - c;
   
@@ -147,9 +147,9 @@ void loop() {
         }else{
           dy_dt = 0;
         }
-        dgamma_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(gammma - PI/2)/tan(alpha) - b*cos(gammma - PI/2));
-        dalpha_dt = -(b*sin(gammma - PI/2)*dgamma_dt + dx_dt);
-        dbeta_dt = -dgamma_dt - dalpha_dt;
+        dphi_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(phi - PI/2)/tan(alpha) - b*cos(phi - PI/2));
+        dalpha_dt = -(b*sin(phi - PI/2)*dphi_dt + dx_dt);
+        dbeta_dt = -dphi_dt - dalpha_dt;
         isStoppedXY = false;
         
         if(pos4 <= INITIAL_4 - 20 && pos5 >= INITIAL_5 + 20){//CHANGE
@@ -170,9 +170,9 @@ void loop() {
           }else{
             dy_dt = 0;
           }
-          dgamma_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(gammma - PI/2)/tan(alpha) - b*cos(gammma - PI/2));
-          dalpha_dt = -(b*sin(gammma - PI/2)*dgamma_dt + dx_dt);
-          dbeta_dt = -dgamma_dt - dalpha_dt;
+          dphi_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(phi - PI/2)/tan(alpha) - b*cos(phi - PI/2));
+          dalpha_dt = -(b*sin(phi - PI/2)*dphi_dt + dx_dt);
+          dbeta_dt = -dphi_dt - dalpha_dt;
           isStoppedXY = false;
         }
         
@@ -188,9 +188,9 @@ void loop() {
         }else{
 	  dx_dt = 0;
 	  dy_dt = BASE_SPEED;
-	  dgamma_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(gammma - PI/2)/tan(alpha) - b*cos(gammma - PI/2));
-          dalpha_dt = -(b*sin(gammma - PI/2)*dgamma_dt + dx_dt);
-          dbeta_dt = -dgamma_dt - dalpha_dt;
+	  dphi_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(phi - PI/2)/tan(alpha) - b*cos(phi - PI/2));
+          dalpha_dt = -(b*sin(phi - PI/2)*dphi_dt + dx_dt);
+          dbeta_dt = -dphi_dt - dalpha_dt;
           isStoppedXY = false;
         }
       }else if(RcvData & RC100_BTN_3){//down
@@ -200,9 +200,9 @@ void loop() {
         }else{
 	  dx_dt = 0;
 	  dy_dt = -BASE_SPEED;
-	  dgamma_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(gammma - PI/2)/tan(alpha) - b*cos(gammma - PI/2));
-          dalpha_dt = -(b*sin(gammma - PI/2)*dgamma_dt + dx_dt);
-          dbeta_dt = -dgamma_dt - dalpha_dt;
+	  dphi_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(phi - PI/2)/tan(alpha) - b*cos(phi - PI/2));
+          dalpha_dt = -(b*sin(phi - PI/2)*dphi_dt + dx_dt);
+          dbeta_dt = -dphi_dt - dalpha_dt;
           isStoppedXY = false;
         }
       }else if(RcvData & RC100_BTN_2){//counterclockwise is left
@@ -218,14 +218,14 @@ void loop() {
           dy_dt = 0;
           dalpha_dt = 0;
 	  dbeta_dt = 0;
-          dgamma_dt = 0;
+          dphi_dt = 0;
           stopXY();
         }
         
-        if(dy_dt != 0}{
-          dgamma_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(gammma - PI/2)/tan(alpha) - b*cos(gammma - PI/2));
-          dalpha_dt = -(b*sin(gammma - PI/2)*dgamma_dt + dx_dt);
-          dbeta_dt = -dgamma_dt - dalpha_dt;
+        if(dy_dt != 0){
+          dphi_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(phi - PI/2)/tan(alpha) - b*cos(phi - PI/2));
+          dalpha_dt = -(b*sin(phi - PI/2)*dphi_dt + dx_dt);
+          dbeta_dt = -dphi_dt - dalpha_dt;
           isStoppedXY = false;
         }
       }else if(RcvData & RC100_BTN_4){//right
@@ -241,14 +241,14 @@ void loop() {
           dy_dt = 0;
           dalpha_dt = 0;
 	  dbeta_dt = 0;
-          dgamma_dt = 0;
+          dphi_dt = 0;
           stopXY();
         }
         
         if(dy_dt != 0){
-          dgamma_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(gammma - PI/2)/tan(alpha) - b*cos(gammma - PI/2));
-          dalpha_dt = -(b*sin(gammma - PI/2)*dgamma_dt + dx_dt);
-          dbeta_dt = -dgamma_dt - dalpha_dt;
+          dphi_dt = (dy_dt + dx_dt/tan(alpha))/(-b*sin(phi - PI/2)/tan(alpha) - b*cos(phi - PI/2));
+          dalpha_dt = -(b*sin(phi - PI/2)*dphi_dt + dx_dt);
+          dbeta_dt = -dphi_dt - dalpha_dt;
           isStoppedXY = false;
         }
       }else{
@@ -257,7 +257,7 @@ void loop() {
 	dy_dt = 0;
 	dalpha_dt = 0;
 	dbeta_dt = 0;
-        dgamma_dt = 0;
+        dphi_dt = 0;
         stopXY();
         
         dtheta_dt = 0;
@@ -270,7 +270,7 @@ void loop() {
       dy_dt = 0;
       dalpha_dt = 0;
       dbeta_dt = 0;
-      dgamma_dt = 0;
+      dphi_dt = 0;
       delay(100);
     }
     
@@ -291,7 +291,7 @@ void stop_conditions(){
   //stop XY motion if any limits have been reached
   if((dx_dt == 0 && dy_dt == 0) || (dx_dt > 0 && x > X_MAX-0.01) || (dx_dt < 0 && x < X_MIN + 0.01) || (dy_dt > 0 && y > Y_MAX - 0.01) || (dy_dt < 0 && y < Y_MIN + 0.01)){
     stopXY();
-  }else if((dalpha_dt > 0 && alpha > ALPHA_MAX - 0.01) || (dalpha_dt < 0 && alpha < ALPHA_MIN + 0.01) || (dbeta_dt > 0 && beta > BETA_MAX - 0.01) || (dbeta_dt < 0 && beta < BETA_MIN + 0.01) || (dgamma_dt > 0 && gammma > GAMMA_MAX - 0.01) || (dgamma_dt < 0 && gammma < GAMMA_MIN + 0.01)){
+  }else if((dalpha_dt > 0 && alpha > ALPHA_MAX - 0.01) || (dalpha_dt < 0 && alpha < ALPHA_MIN + 0.01) || (dbeta_dt > 0 && beta > BETA_MAX - 0.01) || (dbeta_dt < 0 && beta < BETA_MIN + 0.01) || (dphi_dt > 0 && phi > PHI_MAX - 0.01) || (dphi_dt < 0 && phi < PHI_MIN + 0.01)){
     stopXY();
   }
   
@@ -338,13 +338,13 @@ void moveXY(){
       }
     }
     
-    if(dgamma_dt < 0){//positive x or positive y
-      Dxl.setPosition(5,0,abs((int)dgamma_dt));
-    }else if(dgamma_dt > 0){//negative x or negative y
+    if(dphi_dt < 0){//positive x or positive y
+      Dxl.setPosition(5,0,abs((int)dphi_dt));
+    }else if(dphi_dt > 0){//negative x or negative y
       if(dx_dt != 0){
-        Dxl.setPosition(5,INITIAL_5,abs((int)dgamma_dt));
+        Dxl.setPosition(5,INITIAL_5,abs((int)dphi_dt));
       }else{
-        Dxl.setPosition(5,4000,abs((int)dgamma_dt));
+        Dxl.setPosition(5,4000,abs((int)dphi_dt));
       }
     }
   }
@@ -377,14 +377,14 @@ void moveXYFarBack(){
       }
     }
     
-    if(dgamma_dt < 0){//positive x or positive y
-      Dxl.setPosition(5,INITIAL_5,abs((int)dgamma_dt));
-    }else if(dgamma_dt > 0){//negative x or negative y
+    if(dphi_dt < 0){//positive x or positive y
+      Dxl.setPosition(5,INITIAL_5,abs((int)dphi_dt));
+    }else if(dphi_dt > 0){//negative x or negative y
       if(dx_dt != 0){
-        //Dxl.setPosition(5,INITIAL_5,abs((int)dgamma_dt));
-        Dxl.setPosition(5,4000,abs((int)dgamma_dt));//CHANGE
+        //Dxl.setPosition(5,INITIAL_5,abs((int)dphi_dt));
+        Dxl.setPosition(5,4000,abs((int)dphi_dt));//CHANGE
       }else{
-        Dxl.setPosition(5,4000,abs((int)dgamma_dt));
+        Dxl.setPosition(5,4000,abs((int)dphi_dt));
       }
     }
   }
