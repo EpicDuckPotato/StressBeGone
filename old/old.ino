@@ -6,25 +6,20 @@
 #define BASE_SPEED 0.2//in meters per second
 
 #define INITIAL_1 1072//dxl units
-#define INITIAL_3 3800//3750
-#define INITIAL_4 1649//1749
-#define INITIAL_5 1200//1100
+#define INITIAL_3 3800
+#define INITIAL_4 1649
+#define INITIAL_5 1200
 
-//#define X_MAX 0.8//0.7112//28*2.54/100 in meters
-#define X_MAX 0.9//CHANGE
-//#define X_MIN 0.3//equations break down afterward? (weird stuff starts happening)
-#define X_MIN 0///CHANGE
-#define Y_MAX -0.17//equations break down afterward? (motion becomes unsmooth)
-#define Y_MIN -0.3//-7.5*2.54/100
+#define X_MAX 0.9
+#define X_MIN 0
+#define Y_MAX -0.17
+#define Y_MIN -0.3
 #define ALPHA_MIN 0.1
-#define ALPHA_MAX 0.9254//4000 in dxl units
-//#define BETA_MIN 1.2
-#define BETA_MIN 0.25//CHANGE
+#define ALPHA_MAX 0.9254
+#define BETA_MIN 0.25
 #define BETA_MAX 3.14
-//#define GAMMA_MIN 1.5
-#define GAMMA_MIN 1.6//CHANGE
-//#define GAMMA_MAX 3
-#define GAMMA_MAX 4.5//CHANGE
+#define PHI_MIN 1.6
+#define PHI_MAX 4.5
 
 #define LEFT_LIM 1494//dxl units
 #define RIGHT_LIM 828
@@ -38,11 +33,11 @@ double dx_dt;//in meters per second
 double dy_dt;
 double dalpha_dt;//in 0.229 revolutions per second
 double dbeta_dt;
-double dgamma_dt;
+double dphi_dt;
 double dtheta_dt;
 double alpha;//in radians
 double beta;
-double gammma;
+double phi;
 double x;
 double y;
 double a;//upper arm length in meters
@@ -82,7 +77,7 @@ void setup() {
   dy_dt = 0;
   dalpha_dt = 0;
   dbeta_dt = 0;
-  dgamma_dt = 0;
+  dphi_dt = 0;
   dtheta_dt = 0;
   a = 0.3302;//upper arm length in meters
   b = 0.235;//lower arm length
@@ -117,13 +112,13 @@ void loop() {
   pos5 = Dxl.getPosition(5);
   alpha = 2*PI*pos3/4095 - 5.212;
   beta = 2*PI*pos4/4095 + 0.2282 - PI/2;
-  gammma = 3*PI/2 - alpha - beta;
+  phi = 3*PI/2 - alpha - beta;
   x = a*cos(alpha) + b*cos(PI - beta - alpha);
   y = a*sin(alpha) - b*sin(PI - beta - alpha) - c;
   
   double prev_dalpha_dt = dalpha_dt;
   double prev_dbeta_dt = dbeta_dt;
-  double prev_dgamma_dt = dgamma_dt;
+  double prev_dphi_dt = dphi_dt;
   
   //if controller data is available, modify speeds based on data
   if(Controller.available()){
@@ -146,7 +141,7 @@ void loop() {
     	dbeta_dt = -dalpha_dt*(1 + a*cos(alpha)/(b*cos(PI - beta - alpha)));
         isStoppedXY = false;
         
-        if(pos4 <= INITIAL_4 - 20 && pos5 >= INITIAL_5 + 20){//CHANGE
+        if(pos4 <= INITIAL_4 - 20 && pos5 >= INITIAL_5 + 20){
           far_back = true;
         }else{
           far_back = false;
@@ -164,7 +159,7 @@ void loop() {
           isStoppedXY = false;
         }
         
-        if(pos4 <= INITIAL_4 + 20 && pos5 >= INITIAL_5 - 20){//CHANGE
+        if(pos4 <= INITIAL_4 + 20 && pos5 >= INITIAL_5 - 20){
           far_back = true;
         }else{
           far_back = false;
@@ -201,7 +196,7 @@ void loop() {
 	dbeta_dt = 0;
         stopXY();
       }
-      dgamma_dt = -dbeta_dt-dalpha_dt;
+      dphi_dt = -dbeta_dt-dalpha_dt;
 
       //set kinematics parameters for left/right motion (rotation)
       if(RcvData & RC100_BTN_2){//counterclockwise is left
@@ -216,12 +211,12 @@ void loop() {
       }
     }
     
-    if(prev_dalpha_dt*dalpha_dt < 0 || prev_dbeta_dt*dbeta_dt < 0 || prev_dgamma_dt*dgamma_dt < 0){
+    if(prev_dalpha_dt*dalpha_dt < 0 || prev_dbeta_dt*dbeta_dt < 0 || prev_dphi_dt*dphi_dt < 0){
       dx_dt = 0;
       dy_dt = 0;
       dalpha_dt = 0;
       dbeta_dt = 0;
-      dgamma_dt = 0;
+      dphi_dt = 0;
       delay(100);
     }
     
@@ -258,7 +253,7 @@ void stop_conditions(){
   //stop XY motion if any limits have been reached
   if((dx_dt == 0 && dy_dt == 0) || (dx_dt > 0 && x > X_MAX-0.01) || (dx_dt < 0 && x < X_MIN + 0.01) || (dy_dt > 0 && y > Y_MAX - 0.01) || (dy_dt < 0 && y < Y_MIN + 0.01)){
     stopXY();
-  }else if((dalpha_dt > 0 && alpha > ALPHA_MAX - 0.01) || (dalpha_dt < 0 && alpha < ALPHA_MIN + 0.01) || (dbeta_dt > 0 && beta > BETA_MAX - 0.01) || (dbeta_dt < 0 && beta < BETA_MIN + 0.01) || (dgamma_dt > 0 && gammma > GAMMA_MAX - 0.01) || (dgamma_dt < 0 && gammma < GAMMA_MIN + 0.01)){
+  }else if((dalpha_dt > 0 && alpha > ALPHA_MAX - 0.01) || (dalpha_dt < 0 && alpha < ALPHA_MIN + 0.01) || (dbeta_dt > 0 && beta > BETA_MAX - 0.01) || (dbeta_dt < 0 && beta < BETA_MIN + 0.01) || (dphi_dt > 0 && phi > PHI_MAX - 0.01) || (dphi_dt < 0 && phi < PHI_MIN + 0.01)){
     stopXY();
   }
   
@@ -305,13 +300,13 @@ void moveXY(){
       }
     }
     
-    if(dgamma_dt < 0){//positive x or positive y
-      Dxl.setPosition(5,0,abs((int)dgamma_dt));
-    }else if(dgamma_dt > 0){//negative x or negative y
+    if(dphi_dt < 0){//positive x or positive y
+      Dxl.setPosition(5,0,abs((int)dphi_dt));
+    }else if(dphi_dt > 0){//negative x or negative y
       if(dx_dt != 0){
-        Dxl.setPosition(5,INITIAL_5,abs((int)dgamma_dt));
+        Dxl.setPosition(5,INITIAL_5,abs((int)dphi_dt));
       }else{
-        Dxl.setPosition(5,4000,abs((int)dgamma_dt));
+        Dxl.setPosition(5,4000,abs((int)dphi_dt));
       }
     }
   }
@@ -338,20 +333,20 @@ void moveXYFarBack(){
     }else if(dbeta_dt < 0){//negative x or negative y
       if(dx_dt != 0){//x
         //Dxl.setPosition(4,INITIAL_4,abs((int)dbeta_dt));
-        Dxl.setPosition(4,0,abs((int)dbeta_dt));//CHANGE
+        Dxl.setPosition(4,0,abs((int)dbeta_dt));
       }else{//y
         Dxl.setPosition(4,0,abs((int)dbeta_dt));
       }
     }
     
-    if(dgamma_dt < 0){//positive x or positive y
-      Dxl.setPosition(5,INITIAL_5,abs((int)dgamma_dt));
-    }else if(dgamma_dt > 0){//negative x or negative y
+    if(dphi_dt < 0){//positive x or positive y
+      Dxl.setPosition(5,INITIAL_5,abs((int)dphi_dt));
+    }else if(dphi_dt > 0){//negative x or negative y
       if(dx_dt != 0){
-        //Dxl.setPosition(5,INITIAL_5,abs((int)dgamma_dt));
-        Dxl.setPosition(5,4000,abs((int)dgamma_dt));//CHANGE
+        //Dxl.setPosition(5,INITIAL_5,abs((int)dphi_dt));
+        Dxl.setPosition(5,4000,abs((int)dphi_dt));
       }else{
-        Dxl.setPosition(5,4000,abs((int)dgamma_dt));
+        Dxl.setPosition(5,4000,abs((int)dphi_dt));
       }
     }
   }
@@ -440,6 +435,6 @@ void jerk_detector(int motor){
   dy_dt = 0;
   dalpha_dt = 0;
   dbeta_dt = 0;
-  dgamma_dt = 0;
+  dphi_dt = 0;
   delay(100);
 }
