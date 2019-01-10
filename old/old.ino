@@ -98,8 +98,8 @@ void setup() {
   stopPos3 = Dxl.getPosition(3);
   stopPos4 = Dxl.getPosition(4);
   stopPos5 = Dxl.getPosition(5);
-  isStoppedXY = true;
-  isStoppedZ = true;
+  stopXY();
+  stopZ();
   
   far_back = false;
 }
@@ -130,15 +130,16 @@ void loop() {
       }else if(RcvData & RC100_BTN_6){
         Dxl.goalSpeed(6,0);
       }
-      
+        
       //move end effector forward, backward, up, and down based on user input
       if(RcvData & RC100_BTN_U){//forward
         write_all_low();
-    	dy_dt = 0;
-    	dx_dt = BASE_SPEED;
+        dy_dt = 0;
+        dx_dt = BASE_SPEED;
         double denom = a*cos(alpha)*tan(PI - beta - alpha) + a*sin(alpha);
-    	dalpha_dt = 60*((-dx_dt/denom)/(2*PI))/0.229;
-    	dbeta_dt = -dalpha_dt*(1 + a*cos(alpha)/(b*cos(PI - beta - alpha)));
+        dalpha_dt = 60*((-dx_dt/denom)/(2*PI))/0.229;
+        dbeta_dt = -dalpha_dt*(1 + a*cos(alpha)/(b*cos(PI - beta - alpha)));
+        //dbeta_dt = (dalpha_dt*(a*cos(alpha) + b*cos(PI - beta - alpha)) - dy_dt)/(- b*cos(PI - beta - alpha));//why doesn't this work?
         isStoppedXY = false;
         
         if(pos4 <= INITIAL_4 - 20 && pos5 >= INITIAL_5 + 20){
@@ -151,11 +152,11 @@ void loop() {
         if(isStoppedXY && y < Y_MIN + 0.03){
           //
         }else{
-	  dy_dt = 0;
-	  dx_dt = -BASE_SPEED;
+          dy_dt = 0;
+          dx_dt = -BASE_SPEED;
           double denom = a*cos(alpha)*tan(PI - beta - alpha) + a*sin(alpha);
-	  dalpha_dt = 60*((-dx_dt/denom)/(2*PI))/0.229;
-	  dbeta_dt = -dalpha_dt*(1 + a*cos(alpha)/(b*cos(PI - beta - alpha)));
+          dalpha_dt = 60*((-dx_dt/denom)/(2*PI))/0.229;
+          dbeta_dt = -dalpha_dt*(1 + a*cos(alpha)/(b*cos(PI - beta - alpha)));
           isStoppedXY = false;
         }
         
@@ -169,10 +170,10 @@ void loop() {
         if(isStoppedXY && y > Y_MAX - 0.03){
           //counter against gravity
         }else{
-	  dx_dt = 0;
-	  dy_dt = BASE_SPEED;
-	  double denom = a*sin(alpha)/tan(PI - beta - alpha) + a*cos(alpha);
-	  dalpha_dt = 60*((dy_dt/denom)/(2*PI))/0.229;
+          dx_dt = 0;
+          dy_dt = BASE_SPEED;
+          double denom = a*sin(alpha)/tan(PI - beta - alpha) + a*cos(alpha);
+          dalpha_dt = 60*((dy_dt/denom)/(2*PI))/0.229;
           dbeta_dt = -dalpha_dt*(1 - a*sin(alpha)/(b*sin(PI - beta - alpha)));
           isStoppedXY = false;
         }
@@ -181,19 +182,19 @@ void loop() {
         if(isStoppedXY && y < Y_MIN + 0.03){
           //
         }else{
-	  dx_dt = 0;
-	  dy_dt = -BASE_SPEED;
-	  double denom = a*sin(alpha)/tan(PI - beta - alpha) + a*cos(alpha);
-	  dalpha_dt = 60*((dy_dt/denom)/(2*PI))/0.229;
-	  dbeta_dt = -dalpha_dt*(1 - a*sin(alpha)/(b*sin(PI - beta - alpha)));
+          dx_dt = 0;
+          dy_dt = -BASE_SPEED;
+          double denom = a*sin(alpha)/tan(PI - beta - alpha) + a*cos(alpha);
+          dalpha_dt = 60*((dy_dt/denom)/(2*PI))/0.229;
+          dbeta_dt = -dalpha_dt*(1 - a*sin(alpha)/(b*sin(PI - beta - alpha)));
           isStoppedXY = false;
         }
       }else{
         write_all_high();
-	dx_dt = 0;
-	dy_dt = 0;
-	dalpha_dt = 0;
-	dbeta_dt = 0;
+        dx_dt = 0;
+        dy_dt = 0;
+        dalpha_dt = 0;
+        dbeta_dt = 0;
         stopXY();
       }
       dphi_dt = -dbeta_dt-dalpha_dt;
@@ -201,12 +202,12 @@ void loop() {
       //set kinematics parameters for left/right motion (rotation)
       if(RcvData & RC100_BTN_2){//counterclockwise is left
         isStoppedZ = false;
-	dtheta_dt = 25;
+	  dtheta_dt = 25;
       }else if(RcvData & RC100_BTN_4){//right
         isStoppedZ = false;
-	dtheta_dt = -25;
+	  dtheta_dt = -25;
       }else{//stop
-	dtheta_dt = 0;
+	  dtheta_dt = 0;
         stopZ();
       }
     }
@@ -220,11 +221,11 @@ void loop() {
       delay(100);
     }
     
-    if(Dxl.getSpeed(3) > 1080){
+    /*if(Dxl.getSpeed(3) > 1080){
       jerk_detector(3);
     }else if(Dxl.getSpeed(4) > 1100){
       jerk_detector(4);
-    }
+    }*/
     
     //stop if any limits have been reached
     stop_conditions();
@@ -237,16 +238,6 @@ void loop() {
     }else{
       moveXY();
     }
-    /*SerialUSB.print("Stop Position: ");
-    SerialUSB.println(stopPos5);
-    SerialUSB.print("Current Position: ");
-    SerialUSB.println(Dxl.getPosition(5));
-    SerialUSB.println();*/
-    /*int speed = Dxl.getSpeed(4);
-    if(speed > 1000){
-      SerialUSB.println(Dxl.getSpeed(4));
-    }*/
-    //SerialUSB.println(dalpha_dt);
 }
 
 void stop_conditions(){
